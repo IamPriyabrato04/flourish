@@ -19,6 +19,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "@types/express-http-proxy": "^1.6.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
