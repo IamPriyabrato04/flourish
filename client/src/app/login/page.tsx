@@ -4,6 +4,7 @@ import Image from 'next/image'
 import React from 'react'
 
 const Login = () => {
+  
   return (
     <div className="min-h-screen min-w-screen relative flex flex-col justify-center lg:flex-row bg-gray-100">
 

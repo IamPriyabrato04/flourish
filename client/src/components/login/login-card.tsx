@@ -72,7 +72,7 @@ const LoginCard = () => {
             <Button
                 type="button"
                 className="w-full bg-indigo-100 border-1 border-gray-500 text-gray-900 rounded-md hover:bg-indigo-200 transition duration-300 mt-1 flex items-center gap-2 justify-center"
-                onClick={() => signIn("google")}
+                onClick={() => signIn("google", { redirectTo: "/home" })}
             >
                 <Image
                     width={26}

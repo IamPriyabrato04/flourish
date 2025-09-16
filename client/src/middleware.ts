@@ -1,11 +1,32 @@
-export { auth as middleware } from "./auth"
-
-import { auth } from "@/src/auth";
+import { auth as middleware } from "./auth";
+import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export default auth((req) => {
-    if (!req.auth && req.nextUrl.pathname.startsWith("/dashboard")) {
-        // redirect unauthenticated user
+const auth = (req: NextRequest) => {
+    const { pathname } = req.nextUrl;
+
+    const isLoginPage = pathname.startsWith("/login") || pathname === "/";
+
+    const hasAuthToken =
+        !!req.cookies.get("authjs.session-token") ||
+        !!req.cookies.get("__Secure-next-auth.session-token");
+
+    // If user is not authenticated and not on login page → redirect to /login
+    if (!hasAuthToken && !isLoginPage) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
-});
+
+    // If user is authenticated and tries to visit login page → redirect to /home
+    if (hasAuthToken && isLoginPage) {
+        return NextResponse.redirect(new URL("/home", req.url));
+    }
+
+    // Otherwise, allow request
+    return NextResponse.next();
+};
+
+export default middleware(auth);
+
+export const config = {
+    matcher: ["/", "/editor/:path*", "/home", "/login"],
+}
