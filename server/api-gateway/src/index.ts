@@ -6,6 +6,8 @@ import proxy from "express-http-proxy";
 import dotenv from "dotenv";
 dotenv.config();
 
+import authMiddleware from "./middleware/auth-middleware";
+
 const app = express();
 
 
@@ -28,15 +30,16 @@ const proxyOptions = {
 };
 
 
-app.use("/v1/designs", proxy(process.env.DESIGN as string, {
+app.use("/v1/designs", authMiddleware, proxy(process.env.DESIGN as string, {
     ...proxyOptions,
 }));
 
-app.use("/v1/subscription", proxy(process.env.SUBSCRIPTION as string, {
+// here extra logic will be added for subscription service middleware
+app.use("/v1/subscription", authMiddleware, proxy(process.env.SUBSCRIPTION as string, {
     ...proxyOptions,
 }));
 
-app.use("/v1/media", proxy(process.env.UPLOAD as string, {
+app.use("/v1/media", authMiddleware, proxy(process.env.UPLOAD as string, {
     ...proxyOptions,
     parseReqBody: false,
 }));
