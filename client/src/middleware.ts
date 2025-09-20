@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 const auth = (req: NextRequest) => {
     const { pathname } = req.nextUrl;
 
-    const isLoginPage = pathname.startsWith("/login") || pathname === "/";
+    const isLoginPage = pathname.startsWith("/login");
 
     const hasAuthToken =
         !!req.cookies.get("authjs.session-token") ||

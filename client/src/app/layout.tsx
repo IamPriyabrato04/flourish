@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins, Montserrat } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-poppins" });
@@ -29,7 +30,9 @@ export default function RootLayout({
         className={`${fonts.inter.variable} ${fonts.poppins.variable} ${fonts.montserrat.variable} font-sans`}
       >
         <SessionProvider>
-          {children}
+          <SidebarProvider>
+            {children}
+          </SidebarProvider>
         </SessionProvider>
       </body>
     </html>
