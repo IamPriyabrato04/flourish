@@ -1,10 +1,10 @@
 "use client"
-import LoginCard from '@/src/components/login/login-card'
+import LoginCard from '@/components/login/login-card'
 import Image from 'next/image'
 import React from 'react'
 
 const Login = () => {
-  
+
   return (
     <div className="min-h-screen min-w-screen relative flex flex-col justify-center lg:flex-row bg-gray-100">
 

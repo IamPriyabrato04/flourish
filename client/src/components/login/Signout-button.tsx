@@ -2,7 +2,7 @@
 import React from "react";
 import { toast } from "sonner";
 import { signOut } from "next-auth/react";
-import { LogOut, LucideLogOut } from "lucide-react";
+import { LucideLogOut } from "lucide-react";
 
 const SignoutButton = () => {
 
