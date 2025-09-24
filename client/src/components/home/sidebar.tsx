@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,81 +18,80 @@ import { useSession } from "next-auth/react";
 import SignoutButton from "../login/Signout-button";
 
 const items = [
-  {
-    title: "Home",
-    icon: "Home",
-    href: "/home",
-    active: false,
-  },
-  {
-    title: "Projects",
-    icon: "Folder",
-    href: "/home/projects",
-    active: false,
-  },
-  {
-    title: "Billing",
-    icon: "CreditCardIcon",
-    href: "/billing",
-    active: false,
-  },
-  {
-    title: "Settings",
-    icon: "Settings",
-    href: "/home/settings",
-    active: false,
-  },
+  { title: "Home", icon: Home, href: "/home", active: false },
+  { title: "Projects", icon: Folder, href: "/home/projects", active: false },
+  { title: "Billing", icon: CreditCardIcon, href: "/billing", active: false },
+  { title: "Settings", icon: Settings, href: "/home/settings", active: false },
 ];
+
 export const HomeSidebar = () => {
   const { data: session } = useSession();
+  useEffect(() => {
+    const path = window.location.pathname;
+    items.forEach((item) => (item.active = item.href === path));
+
+    return () => {
+      items.forEach((item) => (item.active = false));
+    };
+  }, [items]);
 
   return (
     <Sidebar
       variant="floating"
       collapsible="none"
-      className="h-auto bg-indigo-600 w-min flex flex-col rounded-lg mx-1 my-1 text-2xl font-mono"
+      className="h-screen w-fit flex flex-col rounded-xl bg-primary-foreground shadow-xl not-sm:hidden"
     >
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="w-min text-white rounded-lg p-1">
+            <SidebarMenu className="flex flex-col space-y-1 gap-y-2">
               {items.map((item) => (
-                <SidebarMenuItem key={item.icon}>
-                  <SidebarMenuButton asChild size={"lg"} isActive={item.active}>
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    isActive={item.active}
+                    // onClick={() => {
+                    //   if (item.href) {
+                    //     window.location.href = item.href;
+                    //   }
+                    // }}
+                    className={`h-fit ${item.active ? "bg-gray-200" : ""}`}
+                  >
                     <Link
-                      href={`${item.href}`}
-                      className="flex flex-col justify-center items-center h-max rounded-md focus:bg-indigo-400 transition-colors mb-1"
+                      href={item.href}
+                      className="flex flex-col items-center p-1 
+                                 rounded-lg transition-all duration-200 
+                                 hover:bg-gray-700/60 group"
                     >
-                      {item.icon === "Home" && <Home className="w-12 h-12" />}
-                      {item.icon === "Folder" && (
-                        <Folder className="w-12 h-12 " />
-                      )}
-                      {item.icon === "CreditCardIcon" && (
-                        <CreditCardIcon className="w-12 h-12" />
-                      )}
-                      {item.icon === "Settings" && (
-                        <Settings className="w-12 h-12 " />
-                      )}
-                      <span>{item.title}</span>
+                      <item.icon className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
-            <div className="flex justify-end items-end flex-col gap-y-4 h-full mr-2">
-              <SignoutButton />
-              <Avatar className="h-12 w-12">
-                <AvatarImage
-                  src={session?.user?.image || "https://github.com/shadcn.png"}
-                />
-                <AvatarFallback>{session?.user?.name}</AvatarFallback>
-              </Avatar>
-            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter></SidebarFooter>
+      {/* Footer with Avatar + Logout */}
+      <SidebarFooter className="mt-auto pb-10">
+        <div className="flex flex-col items-center gap-y-2">
+          <Avatar className="h-12 w-12 border-2 border-gray-600 shadow-md">
+            <AvatarImage
+              src={session?.user?.image || "https://github.com/shadcn.png"}
+            />
+            <AvatarFallback className="bg-gray-700 text-white">
+              {session?.user?.name?.[0] ?? "U"}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-[10px] text-gray-700 truncate max-w-[70px]">
+            {session?.user?.name || "Guest"}
+          </span>
+          <SignoutButton />
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 };
