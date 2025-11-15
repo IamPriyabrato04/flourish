@@ -1,50 +1,68 @@
 import type { NextFunction, Request, Response } from "express";
-import { OAuth2Client } from "google-auth-library";
+import { OAuth2Client, type TokenPayload } from "google-auth-library";
+import { logger } from "../utils/logger";
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// 1) Env + client
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+if (!GOOGLE_CLIENT_ID) {
+    logger.fatal("GOOGLE_CLIENT_ID is not set. Auth middleware cannot function without it.");
+    throw new Error("Missing GOOGLE_CLIENT_ID");
+}
+const oauthClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
 
-    if (!authHeader || typeof authHeader !== 'string') { // check authHeader's type whether it is string or not
+// 3) Middleware
+export default async function authMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    // Node lower-cases header names; get() normalizes + returns string|undefined
+    const authHeader = req.get("authorization");
+    if (!authHeader) {
         return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const token = authHeader.split(' ')[1]; // at this line authHeader is string
-
-    if (!token) {
+    const [scheme, token] = authHeader.split(" ");
+    if (!token || !scheme || scheme.toLowerCase() !== "bearer") {
         return res.status(401).json({ error: "Access denied! No token provided" });
     }
-    // You may want to call next() or add further logic here
+
     try {
-        const ticket = await client.verifyIdToken({
+        const ticket = await oauthClient.verifyIdToken({
             idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID,
+            audience: GOOGLE_CLIENT_ID, // keep in sync with the constant
         });
 
-        const payload = ticket.getPayload();
-        if (typeof payload === 'undefined') {
+        const payload: TokenPayload | undefined = ticket.getPayload();
+        if (!payload) {
             return res.status(401).json({ error: "Invalid token" });
         }
 
-        // Extend the Request type to allow 'user' property and add user info to req object
-        (req as Request & { user?: any }).user = {
-            userId: payload['sub'],
-            email: payload['email'],
-            name: payload['name'],
-        }
+        // Optional extra checks (helpful in production)
+        // if (payload.iss !== "https://accounts.google.com" && payload.iss !== "accounts.google.com") {
+        //   return res.status(401).json({ error: "Invalid issuer" });
+        // }
+        // if (!payload.email_verified) {
+        //   return res.status(401).json({ error: "Email not verified" });
+        // }
 
-        // Add userId to headers for downstream services
-        req.headers['x-user-id'] = payload['sub'];
-        //optional
-        req.headers['x-user-email'] = payload['email'];
-        req.headers['x-user-name'] = payload['name'];
+        req.user = {
+            id: payload.sub!,
+            email: payload.email,
+            name: payload.name,
+            image: payload.picture,
+        };
+
+        // Do NOT mutate req.headers — attach to res.locals or set on outgoing proxy requests instead.
+        res.locals.userId = payload.sub;
+        res.locals.userEmail = payload.email;
+        res.locals.userName = payload.name;
+
         next();
-    } catch (error) {
+    } catch (err) {
+        // Optional: log details server-side, keep response generic
+        logger.warn({ err }, "Failed to verify Google ID token");
         return res.status(401).json({ error: "Invalid token" });
-
     }
 }
-
-
-export default authMiddleware;

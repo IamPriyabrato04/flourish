@@ -3,9 +3,11 @@ node_modules
 
 # output
 out
-dist
 *.tgz
 
+# TypeScript build output
+/dist
+dist
 # code coverage
 coverage
 *.lcov
@@ -30,5 +32,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # IntelliJ based IDEs
 .idea
 
-# Finder (MacOS) folder config
+# OS generated files
 .DS_Store
+
+# Test coverage
+/coverage

@@ -1,12 +1,12 @@
-import pino from 'pino';
+import pino from "pino";
 
 export const logger = pino({
-   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-   transport:
-      process.env.NODE_ENV === "development"
-         ? {
-            target: "pino-pretty", // for readable logs in dev
-            options: { colorize: true, translateTime: "SYS:standard" },
-         }
-         : undefined,
-})
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  transport:
+    process.env.NODE_ENV === "development"
+      ? {
+          target: "pino-pretty", // for readable logs in dev
+          options: { colorize: true, translateTime: "SYS:standard" },
+        }
+      : undefined,
+});
