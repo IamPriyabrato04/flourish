@@ -1,16 +1,14 @@
-"use client"
-import LoginCard from '@/components/login/login-card'
-import Image from 'next/image'
-import React from 'react'
+'use client';
+import LoginCard from '@/components/login/login-card';
+import Image from 'next/image';
+import React from 'react';
 
 const Login = () => {
-
   return (
-    <div className="min-h-screen min-w-screen relative flex flex-col justify-center lg:flex-row bg-gray-100">
-
+    <div className="relative flex min-h-screen min-w-screen flex-col justify-center bg-gray-100 lg:flex-row">
       {/* Overlay for small & medium devices */}
-      <div className="flex flex-col justify-center items-center w-full lg:w-3/5 relative z-10 p-4">
-        <div className="bg-white/70 p-6 rounded-xl shadow-xl w-full max-w-md lg:bg-white">
+      <div className="relative z-10 flex w-full flex-col items-center justify-center p-4 lg:w-3/5">
+        <div className="w-full max-w-md rounded-xl bg-white/70 p-6 shadow-xl lg:bg-white">
           <LoginCard />
         </div>
       </div>
@@ -27,7 +25,7 @@ const Login = () => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Login;

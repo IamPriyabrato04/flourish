@@ -1,8 +1,8 @@
-"use client"
-import SignoutButton from '@/src/components/login/Signout-button';
+'use client';
+import SignoutButton from '@/components/login/Signout-button';
 import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation'
-import React from 'react'
+import { redirect } from 'next/navigation';
+import React from 'react';
 
 export default function Editor() {
   const { data: session, status } = useSession();
@@ -12,9 +12,9 @@ export default function Editor() {
   }
 
   return (
-    <div>Editor
+    <div>
+      Editor
       <SignoutButton />
     </div>
-  )
+  );
 }
-

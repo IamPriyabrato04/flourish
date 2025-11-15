@@ -1,12 +1,12 @@
-import { HomeSidebar } from "@/components/home/sidebar";
-import AdvertisementBanner from "@/components/ui/advertisement-banner";
-import { SidebarProvider } from "components/ui/sidebar";
-import React from "react";
+import { HomeSidebar } from '@/components/home/sidebar';
+import AdvertisementBanner from '@/components/ui/advertisement-banner';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import React from 'react';
 
 const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <>
-      <main className="h-screen container max-w-screen overflow-hidden">
+      <main className="container h-screen max-w-screen overflow-hidden">
         <AdvertisementBanner />
         <SidebarProvider defaultOpen={false}>
           <HomeSidebar />
