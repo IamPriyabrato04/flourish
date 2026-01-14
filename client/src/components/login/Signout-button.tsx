@@ -7,7 +7,7 @@ import { LucideLogOut } from 'lucide-react';
 const SignoutButton = () => {
   const handleSignout = async () => {
     try {
-      await signOut({ redirect: false, callbackUrl: '/login' }); // prevent auto-redirect
+      await signOut({ redirect: true, callbackUrl: '/login' }); //  auto-redirect
       toast('Logged out successfully!');
     } catch (err) {
       console.error('Error signing out:', err);
